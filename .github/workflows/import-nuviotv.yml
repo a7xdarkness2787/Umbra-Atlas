@@ -1,0 +1,55 @@
+name: Import NuvioTV foundation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - bootstrap/import-request
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.repository == 'a7xdarkness2787/Umbra-Atlas'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Import NuvioTV dev history
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" atlas
+          cd atlas
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream https://github.com/NuvioMedia/NuvioTV.git
+          git fetch --no-tags upstream dev
+          upstream_sha="$(git rev-parse upstream/dev)"
+
+          git checkout -B agent/nuvio-tv-import origin/main
+          git merge --allow-unrelated-histories --no-commit -s ours upstream/dev
+          git rm -r --ignore-unmatch .
+          git checkout upstream/dev -- .
+
+          mkdir -p docs
+          cat > docs/UPSTREAM.md <<EOF
+          # Upstream foundation
+
+          Umbra Atlas began from the NuvioTV Android TV application.
+
+          - Upstream repository: https://github.com/NuvioMedia/NuvioTV
+          - Upstream branch: \`dev\`
+          - Imported commit: \`${upstream_sha}\`
+          - Upstream license: GNU General Public License v3.0; see \`LICENSE\`
+
+          The import merge retains the upstream commit as a parent. Atlas-specific Runtime integration and product changes are developed as subsequent commits.
+          EOF
+
+          git add -A
+          git commit -m "Import NuvioTV dev as Atlas foundation"
+          git push origin HEAD:refs/heads/agent/nuvio-tv-import --force
