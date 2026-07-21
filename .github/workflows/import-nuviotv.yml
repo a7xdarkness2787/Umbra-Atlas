@@ -3,9 +3,12 @@ name: Import NuvioTV foundation
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
+      - agent/nuvio-tv-import
     paths:
       - bootstrap/import-request
+      - bootstrap/import-request-branch
 
 permissions:
   contents: write
