@@ -17,3 +17,7 @@ Umbra Ghost Kodi
 This repository is being initialized from the GPL-licensed NuvioTV `dev` history so Atlas can retain its mature TV navigation and Media3 player while adding the universal Umbra Runtime source-provider boundary.
 
 The import is performed by a repository workflow and records the exact upstream commit. Subsequent Atlas changes will be developed through tested pull requests.
+
+## License
+
+GNU GPL v3.0 only. See `LICENSE` and `LICENSE-NOTICE`.
